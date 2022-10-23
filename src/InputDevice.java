@@ -24,11 +24,6 @@ public class InputDevice {
         return x;
     }
 
-//    public String[] getPlaces(){
-//        String[] locations = {"Pacific Avenue", "North Carolina Avenue", "Community Chest", "Pennsylvania Avenue", "Short Line", "Chance", "Park Place", "LUXURY TAX", "Boardwalk"};
-//        return locations;
-//    }
-
     public Square[] getSquares(){
         Square[] squares = {
             new Square("Start"),

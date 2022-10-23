@@ -1,7 +1,7 @@
 public class Application {
     public InputDevice in;
     public OutputDevice out;
-    private int players, rounds;
+    private int players, rounds, squares;
     Application(InputDevice in, OutputDevice out){
         this.in = in;
         this.out = out;
@@ -31,7 +31,34 @@ public class Application {
         this.rounds = rounds;
     }
 
+    public void current_square(Player player, Square[] squares)
+    {
+        Square square = squares[player.getPosition()];
+        if (square instanceof Property)
+        {
+            if (((Property) square).has_holder() == false)
+            {
+                if (player.getMoney() >= ((Property) square).getCost()) {
+                    out.buy_property(square);
+                    ((Property) square).buy(player);
+                }
+                else {
+                    out.player_missing_cash();
+                }
+            }
+            else{
+                out.pay_tax(square);
+                ((Property) square).tax_player(player);
+            }
+        }
+        else if(square instanceof Square)
+        {
+            //nothing for now
+        }
+    }
+
     void play_game(){
+        Square[] squares = in.getSquares();
         in.declare();
         initPlayers();
         out.writeMessage();
@@ -44,7 +71,8 @@ public class Application {
                 playersArr[j].move(in.ThrowDice(), board);
                 out.print_name(playersArr[j]);
                 out.print_roll_nr(playersArr[j]);
-                out.print_position(playersArr[j], in.getPlaces());
+                out.print_position(playersArr[j], squares);
+                current_square(playersArr[j], squares);
                 out.print_money(playersArr[j]);
             }
         }
@@ -58,16 +86,18 @@ public class Application {
         for(int i=0;i<rounds;i++)
             for(int j=0;j<players;j++)
             {
-                if(playersArr[j].getMoney() > maximum){
-                    maximum = playersArr[j].getMoney();
+                if(playersArr[j].getNetworth() > maximum){
+                    maximum = playersArr[j].getNetworth();
                     position = playersArr[j].getPosition();
                     winner = playersArr[j];
                 }
-                else if(playersArr[j].getMoney() == maximum){
+                else if(playersArr[j].getNetworth() == maximum){
                     position = playersArr[j].getPosition();
                     winner = playersArr[j];
                 }
             }
+        out.print_finish();
+        out.print_networth(playersArr, players);
         out.print_winner(winner);
         out.print_bank(board);
     }

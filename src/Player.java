@@ -1,8 +1,27 @@
+import java.util.List;
+
 public class Player {
     private String name;
     private int money = 0;
     private int dice_roll = 0;
+
+    public void increment_property_value(int property_value) {
+        this.property_value += property_value;
+    }
+
     private int position = 0;
+
+    private int property_value = 0;
+
+    public void add_property(Square square)
+    {
+        this.property_value += ((Property) square).getCost();
+    }
+
+    public int getNetworth()
+    {
+        return this.money + this.property_value;
+    }
 
     public Player(String name) {
         this.name = name;
